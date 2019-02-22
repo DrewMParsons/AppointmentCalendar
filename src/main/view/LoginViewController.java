@@ -7,12 +7,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -28,21 +30,45 @@ public class LoginViewController implements Initializable
 {
 
     @FXML
+    private Label loginHeader;
+    @FXML
+    private Label userName;
+    @FXML
+    private Label password;
+    @FXML
     private TextField userIDTextField;
     @FXML
     private PasswordField pwField;
     @FXML
     private Label errorMsgLabel;
+    @FXML
+    private Button loginButton;
+    
+    
 
     public static int USERID;
+    
+    //private ResourceBundle resourceBundle;
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        errorMsgLabel.setText("");
+        //hide the error message label
+        errorMsgLabel.setVisible(false);
+        
+        //set the resourcebundle to the user's default Locale
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("LoginViewController",Locale.getDefault());
+        loginHeader.setText(resourceBundle.getString("login"));
+        userName.setText(resourceBundle.getString("name"));
+        password.setText(resourceBundle.getString("password"));
+        errorMsgLabel.setText(resourceBundle.getString("error"));
+        
+        
+        
     }
+    
 
     @FXML
     private void loginButtonPushed(ActionEvent event) throws IOException
@@ -80,7 +106,9 @@ public class LoginViewController implements Initializable
             }
             else
             {
-                errorMsgLabel.setText("User ID and password are incorrect");
+               
+                
+                 errorMsgLabel.setVisible(true);
             }
 
         } catch (SQLException ex)
@@ -88,5 +116,7 @@ public class LoginViewController implements Initializable
             Logger.getLogger(LoginViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    
 
 }
