@@ -1,0 +1,46 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+    -fx-background-color: white;
+}
+.button{
+    -fx-font-size: 14pt;
+    -fx-effect: dropshadow(one-pass-box,black,8,0.0,5,0);
+    -fx-background-color: white;
+    -fx-border-radius: 12pt;
+    -fx-webkit-transition-duration:0.4s; 
+    -fx-transition-duration:0.4s;
+}
+.button:hover{
+    -fx-background-color:#008CBA;
+    -fx-color:white;
+}
+.label.header {
+    -fx-font-size: 36px;
+}
+
+.label {
+    -fx-font-size: 20px;
+    
+                    
+}
+.text-field {
+    -fx-font-size:20px;
+    -fx-box-sizing:border-box;
+    -fx-border-radius: 4px;
+    
+    -fx-transition: 0.5s;
+    -fx-outline: none;
+    
+    
+}
+.text-field:focused{
+    
+        
+}
+
+.toggle-button:selected{
+    -fx-background-color: black;
+}
