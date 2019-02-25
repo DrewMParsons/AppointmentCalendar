@@ -5,8 +5,6 @@
  */
 package main.utils;
 
-import main.model.Customer;
-
 /**
  *
  * @author Drew Parsons

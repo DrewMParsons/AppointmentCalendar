@@ -31,6 +31,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
+import static main.exceptions.Alerts.deleteAlert;
 import main.model.Appointment;
 import main.model.Customer;
 import main.model.User;
@@ -54,9 +55,9 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @FXML
     private TableColumn<Appointment, String> dateColumn;
     @FXML
-    private TableColumn<Appointment, LocalTime> startTimeColumn;
+    private TableColumn<Appointment, String> startTimeColumn;
     @FXML
-    private TableColumn<Appointment, LocalTime> endTimeColumn;
+    private TableColumn<Appointment, String> endTimeColumn;
     @FXML
     private Button addAppointmentButton;
     @FXML
@@ -79,7 +80,8 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        System.out.println("User ID:"+ LoginViewController.USERID);
+        
+        System.out.println("User ID:" + LoginViewController.USERID);
         // Disable Edit and Delete Appointment Buttons
         editAppointmentButton.setDisable(true);
         deleteAppointmentButton.setDisable(true);
@@ -87,10 +89,10 @@ public class AppointmentViewController implements Initializable, ControllerInter
         //Config Table Colums
         typeColumn.setCellValueFactory(cellData -> cellData.getValue().TypeProperty());
         dayOfWeekColumn.setCellValueFactory(cellData -> cellData.getValue().DayProperty());
-        startTimeColumn.setCellValueFactory(new PropertyValueFactory<Appointment, LocalTime>("startTime"));
-        endTimeColumn.setCellValueFactory(new PropertyValueFactory<Appointment, LocalTime>("endTime"));
+        startTimeColumn.setCellValueFactory(cellData -> cellData.getValue().StartTimeProperty());
+        endTimeColumn.setCellValueFactory(cellData -> cellData.getValue().EndTimeProperty());
         dateColumn.setCellValueFactory(cellData -> cellData.getValue().DateProperty());
-        
+
         {
 
             try
@@ -105,44 +107,59 @@ public class AppointmentViewController implements Initializable, ControllerInter
         }
     }
 
-        @FXML
-        private void addAppointmentButtonHandler
-        (ActionEvent event) throws IOException
-        {
-            SceneChanger sc = new SceneChanger();
-            sc.changeScenes(event, "EditAppointmentView.fxml", "Add Appointment");
-        }
-        @FXML
-        private void backButtonHandler
-        (ActionEvent event) throws IOException
-        {
-            SceneChanger sc = new SceneChanger();
-            sc.changeScenes(event, "CustomerTableView.fxml", "Customer Table");
-        }
+    @FXML
+    private void addAppointmentButtonHandler(ActionEvent event) throws IOException
+    {
+        SceneChanger sc = new SceneChanger();
+        sc.changeScenes(event, "EditAppointmentView.fxml", "Add Appointment");
+    }
 
-        @FXML
-        private void deleteAppointmentButtonHandler
-        (ActionEvent event
-        
-        
-        ) {
+    @FXML
+    private void backButtonHandler(ActionEvent event) throws IOException
+    {
+        SceneChanger sc = new SceneChanger();
+        sc.changeScenes(event, "CustomerTableView.fxml", "Customer Table");
+    }
+    /**
+     * If appointment has been selected in the table, this enables the edit and
+     * delete button
+     */
+    @FXML
+    public void appointmentSelected()
+    {
+        deleteAppointmentButton.setDisable(false);
+        editAppointmentButton.setDisable(false);
 
     }
+
     @FXML
-        private void editAppointmentButtonHandler
-        (ActionEvent event) throws IOException
+    private void deleteAppointmentButtonHandler(ActionEvent event) throws SQLException
+    {
+        Appointment appointment = this.appointmentTableView.getSelectionModel().getSelectedItem();
+        
+        if(deleteAlert(" The Selected Appointment"))
         {
-            SceneChanger sc = new SceneChanger();
-            sc.changeScenes(event, "EditAppointmentView.fxml", "Edit Appointment");
+            appointment.deleteFromDB(appointment.getAppointmentID());
         }
-    
+
+        
+    }
+
+    @FXML
+    private void editAppointmentButtonHandler(ActionEvent event) throws IOException
+    {
+        Appointment appointment = this.appointmentTableView.getSelectionModel().getSelectedItem();
+        SceneChanger sc = new SceneChanger();
+        EditAppointmentViewController eavc = new EditAppointmentViewController();
+        sc.changeScenes(event, "EditAppointmentView.fxml", "Edit Appointment",appointment,eavc);
+    }
 
     private void loadAppointments() throws SQLException
     {
 
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         String sql = "SELECT appointmentId, customerId, type, start, end "
-                + "FROM appointment WHERE userId =" + LoginViewController.USERID+";";
+                + "FROM appointment WHERE userId =" + LoginViewController.USERID + ";";
 
         try (Connection conn = DataBaseConnector.getConnection();
                 Statement statement = conn.createStatement();
@@ -150,8 +167,12 @@ public class AppointmentViewController implements Initializable, ControllerInter
         {
             while (rs.next())
             {
-                //Appointment newAppointment = new Appointment(rs.getString("type"), rs.getInt("customerId"), LoginViewController.USERID);
-                Appointment newAppointment = new Appointment(rs.getString("type"), rs.getInt("customerId"), LoginViewController.USERID, rs.getTimestamp("start"), rs.getTimestamp("end"));
+                Appointment newAppointment = new Appointment(rs.getInt("appointmentId"),
+                        rs.getString("type"),
+                        rs.getInt("customerId"), LoginViewController.USERID,
+                       
+                        rs.getTimestamp("start"), rs.getTimestamp("end"));
+
                 appointments.add(newAppointment);
             }
 
@@ -167,8 +188,7 @@ public class AppointmentViewController implements Initializable, ControllerInter
     public void preloadData(User user)
     {
         this.user = user;
-        
-        
+
     }
 
 }

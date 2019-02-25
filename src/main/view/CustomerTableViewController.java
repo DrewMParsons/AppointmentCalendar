@@ -115,9 +115,9 @@ public class CustomerTableViewController implements Initializable, ControllerInt
     }
 
     /**
-     * If customer has been selected in the table, this enables the edit and
-     * deletbutton
+     * If customer has been selected in the table, this enables the edit button
      */
+    @FXML
     public void customerSelected()
     {
         editCustomerButton.setDisable(false);

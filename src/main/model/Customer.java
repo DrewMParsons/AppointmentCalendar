@@ -10,7 +10,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -197,13 +196,13 @@ public class Customer
         Date createDate = Date.valueOf(LocalDate.now());
         String sqlCountryID = "SELECT cityId FROM city WHERE city =?;";
         String sqlCustomer = "INSERT INTO customer (customerName,addressId,active,createDate,createdBy,lastUpdateBy) "
-                           + "VALUES(?,last_insert_id(),1,?,?,?)";
+                           + "VALUES(?,last_insert_id(),1,?,?,?);";
         String sqlAddress = "INSERT INTO address (address,address2,cityId,phone,createDate,createdBy,lastUpdateBy)"
-                + " VALUES(?,?,?,?,?,?,?)";
+                + " VALUES(?,?,?,?,?,?,?);";
         
         try (Connection conn = DataBaseConnector.getConnection())
         {
-            try(PreparedStatement ps = conn.prepareStatement(sqlCountryID);)
+            try(PreparedStatement ps = conn.prepareStatement(sqlCountryID))
                     
             {
                 
@@ -246,6 +245,7 @@ public class Customer
 
     /**
      * Updates the Customer in the Database
+     * @param city
      * @param customerID
      * @param addressID
      * @throws java.sql.SQLException

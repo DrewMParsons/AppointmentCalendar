@@ -23,7 +23,7 @@
          </padding>
          <children>
             <Label id="header" styleClass="header" text="Appointments" />
-            <TableView fx:id="appointmentTableView" prefHeight="375.0" prefWidth="760.0">
+            <TableView fx:id="appointmentTableView" onMouseClicked="#appointmentSelected" prefHeight="375.0" prefWidth="760.0">
               <columns>
                 <TableColumn fx:id="typeColumn" prefWidth="97.0" text="Type" />
                   <TableColumn fx:id="dayOfWeekColumn" prefWidth="136.0" text="Day" />

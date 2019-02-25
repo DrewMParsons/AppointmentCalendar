@@ -1,4 +1,3 @@
-
 package main.view;
 
 import main.utils.ControllerInterface;
@@ -23,6 +22,7 @@ import main.exceptions.Alerts;
 import static main.exceptions.Alerts.cancelAlert;
 import static main.exceptions.Alerts.deleteAlert;
 import static main.exceptions.Alerts.saveAlert;
+import main.exceptions.Validations;
 import main.model.Customer;
 import main.utils.DataBaseConnector;
 
@@ -52,6 +52,8 @@ public class EditCustomerViewController implements Initializable, ControllerInte
     private Button cancelButton;
     @FXML
     Label header;
+    @FXML
+    Label errorMessageLabel;
 
     private Customer customer;
     private int customerID;
@@ -78,7 +80,8 @@ public class EditCustomerViewController implements Initializable, ControllerInte
     {
         //set Delete Button to visable(false)
         deleteCustomerButton.setVisible(false);
-        
+        //set error message to empty
+        errorMessageLabel.setText("");
         try
         {
             initCountry();
@@ -89,9 +92,9 @@ public class EditCustomerViewController implements Initializable, ControllerInte
     }
 
     @Override
-    public  void preloadData(Customer customer)
+    public void preloadData(Customer customer)
     {
-        
+
         deleteCustomerButton.setVisible(true);
         this.customer = customer;
         this.customerNameTextField.setText(customer.getCustomerName());
@@ -120,24 +123,25 @@ public class EditCustomerViewController implements Initializable, ControllerInte
             sc.changeScenes(event, "CustomerTableView.fxml", "Customer Table");
         }
     }
+
     /**
      * if customer has been selected in the table, this method will delete the
      * customer from the Database.
-     * @param event 
+     *
+     * @param event
      */
     @FXML
-    void deleteCustomerButtonHandler(ActionEvent event) throws SQLException, IOException {
-     
-        if(deleteAlert(customer.getCustomerName()))
-        {    
-        customer.deleteFromDB(customer.getCustomerID());
-        SceneChanger sc = new SceneChanger();
-        sc.changeScenes(event, "CustomerTableView.fxml", "Customer Table");
-        
+    void deleteCustomerButtonHandler(ActionEvent event) throws SQLException, IOException
+    {
+
+        if (deleteAlert(customer.getCustomerName()))
+        {
+            customer.deleteFromDB(customer.getCustomerID());
+            SceneChanger sc = new SceneChanger();
+            sc.changeScenes(event, "CustomerTableView.fxml", "Customer Table");
+
         }
-        
-        
-   
+
     }
 
     /**
@@ -145,44 +149,42 @@ public class EditCustomerViewController implements Initializable, ControllerInte
      * from the city table that match the Country selected in the Country
      * combobox
      */
-    @FXML 
+    @FXML
     private void initCity() throws SQLException
     {
-        
+
         String country = countryComboBox.getValue();
 
         String sql = "SELECT city "
                 + "FROM city, country "
                 + "WHERE city.countryId = country.countryId "
                 + "AND country.country =?;";
-        
-        
+
         try
         {
             Connection conn = DataBaseConnector.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, country);
-                ResultSet rs = ps.executeQuery();
-        
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, country);
+            ResultSet rs = ps.executeQuery();
+
             cityComboBox.getItems().clear();
-            while(rs.next())
+            while (rs.next())
             {
                 cityComboBox.getItems().add(rs.getString(1));
             }
-        }catch(SQLException e)
+        } catch (SQLException e)
         {
             System.err.println(e.getMessage());
         }
     }
-    
+
     /**
      * This method will populate the County comboBox with a list of Country from
      * DB
      */
-    
     private void initCountry() throws SQLException
     {
-        
+
         String sql = ("SELECT country FROM country");
         // Connect to DB
         try (Connection conn = DataBaseConnector.getConnection();
@@ -209,21 +211,26 @@ public class EditCustomerViewController implements Initializable, ControllerInte
     @FXML
     private void saveButtonHandler(ActionEvent event) throws IOException, SQLException
     {
-        if (customer != null)//update existing Customer
+        if (validateCustomer())
         {
-            updateCustomer();
-            customer.updateInDB(cityComboBox.getValue(),customerID,addressID);
-        } else //create new customer
-        {
-            customer = new Customer(customerNameTextField.getText(), addressTextField.getText(),
-                    cityComboBox.getValue(), countryComboBox.getValue(),
-                    phoneTextField.getText());
-            customer.addInDB(cityComboBox.getValue());
-        }
-        saveAlert();
+            if (customer != null)//update existing Customer
+            {
 
-        SceneChanger sc = new SceneChanger();
-        sc.changeScenes(event, "CustomerTableView.fxml", "Customer Table");
+                updateCustomer();
+                customer.updateInDB(cityComboBox.getValue(), customerID, addressID);
+            } else //create new customer
+            {
+
+                customer = new Customer(customerNameTextField.getText(), addressTextField.getText(),
+                        cityComboBox.getValue(), countryComboBox.getValue(),
+                        phoneTextField.getText());
+                customer.addInDB(cityComboBox.getValue());
+            }
+            saveAlert();
+
+            SceneChanger sc = new SceneChanger();
+            sc.changeScenes(event, "CustomerTableView.fxml", "Customer Table");
+        }
 
     }
 
@@ -242,7 +249,31 @@ public class EditCustomerViewController implements Initializable, ControllerInte
 
     }
 
-    
-    
+    /**
+     * Method checks that all fields have values using the Validations method
+     * isInputValid.  This method will alert the user if a field is empty will
+     * a pop up alert message box
+     * @return 
+     */
+    private boolean validateCustomer()
+    {
+        if (Validations.isInputValid(customerNameTextField))
+        {
+            if (Validations.isInputValid(addressTextField))
+            {
+                if (Validations.isInputValid(countryComboBox))
+                {
+                    if (Validations.isInputValid(cityComboBox))
+                    {
+                        if (Validations.isInputValid(phoneTextField))
+                        {
+                            return true;
+                        }
+                    }
 
+                }
+            }
+        }
+        return false;
+    }
 }

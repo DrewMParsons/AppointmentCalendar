@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import main.model.Appointment;
 import main.model.Customer;
 import main.model.User;
 import main.utils.ControllerInterface;
@@ -22,7 +23,7 @@ import main.utils.ControllerInterface;
  *
  * @author Drew Parsons
  */
-public class SceneChanger
+public class SceneChanger<T>
 {
     private static User loggedInUser;
     
@@ -72,7 +73,67 @@ public class SceneChanger
      * @param controller
      * @throws java.io.IOException
      */
-    public void changeScenes(ActionEvent event, String viewName, String title,Customer customer,ControllerInterface controller) throws IOException
+//    public void changeScenes(ActionEvent event, String viewName, String title,Customer customer,ControllerInterface controller) throws IOException
+//    {
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(getClass().getResource(viewName));
+//        Parent parent = loader.load();
+//        
+//        Scene scene = new Scene(parent);
+//        
+//        //access the controller class and preload the  data
+//        controller = loader.getController();
+//        controller.preloadData(customer);
+//        
+//        //get the stage from the event that was passed in
+//        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+//        
+//        stage.setTitle(title);
+//        stage.setScene(scene);
+//        stage.show();
+//        
+//    }
+//
+//    
+//    public void changeScenes(ActionEvent event, String viewName, String title, User user, ControllerInterface controller) throws IOException
+//    {
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(getClass().getResource(viewName));
+//        Parent parent = loader.load();
+//        
+//        Scene scene = new Scene(parent);
+//        
+//        //access the controller class and preload the  data
+//        controller = loader.getController();
+//        controller.preloadData(user);
+//        
+//        //get the stage from the event that was passed in
+//        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+//        
+//        stage.setTitle(title);
+//        stage.setScene(scene);
+//        stage.show();
+//    }
+//        public void changeScenes(ActionEvent event, String viewName, String title, Appointment appointment, ControllerInterface controller) throws IOException
+//    {
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(getClass().getResource(viewName));
+//        Parent parent = loader.load();
+//        
+//        Scene scene = new Scene(parent);
+//        
+//        //access the controller class and preload the  data
+//        controller = loader.getController();
+//        controller.preloadData(appointment);
+//        
+//        //get the stage from the event that was passed in
+//        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+//        
+//        stage.setTitle(title);
+//        stage.setScene(scene);
+//        stage.show();
+//    }
+        public void changeScenes(ActionEvent event, String viewName, String title, T t, ControllerInterface controller) throws IOException
     {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource(viewName));
@@ -82,29 +143,7 @@ public class SceneChanger
         
         //access the controller class and preload the  data
         controller = loader.getController();
-        controller.preloadData(customer);
-        
-        //get the stage from the event that was passed in
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        
-        stage.setTitle(title);
-        stage.setScene(scene);
-        stage.show();
-        
-    }
-
-    
-    public void changeScenes(ActionEvent event, String viewName, String title, User user, ControllerInterface controller) throws IOException
-    {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource(viewName));
-        Parent parent = loader.load();
-        
-        Scene scene = new Scene(parent);
-        
-        //access the controller class and preload the  data
-        controller = loader.getController();
-        controller.preloadData(user);
+        controller.preloadData(t);
         
         //get the stage from the event that was passed in
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -113,5 +152,6 @@ public class SceneChanger
         stage.setScene(scene);
         stage.show();
     }
+        
     
 }

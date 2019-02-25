@@ -43,9 +43,21 @@ public class LoginViewController implements Initializable
     private Label errorMsgLabel;
     @FXML
     private Button loginButton;
-    
-    
+    private User user;
 
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
+    
+    
+    
+    public static String USERNAME;
     public static int USERID;
     
     //private ResourceBundle resourceBundle;
@@ -76,7 +88,7 @@ public class LoginViewController implements Initializable
         String userID = userIDTextField.getText();
         String pwEntered = pwField.getText();
         String sql = "SELECT * FROM user WHERE userName =?;";
-        User user=null;
+        
 
         //Query the DB with the ID and pword provided
         try
@@ -100,6 +112,7 @@ public class LoginViewController implements Initializable
             {
                 SceneChanger sc = new SceneChanger();
                 USERID = user.getUserID();
+                USERNAME= user.getUserName();
                 SceneChanger.setLoggedInUser(user);
                 CustomerTableViewController ctvc = new CustomerTableViewController();
                 sc.changeScenes(event, "CustomerTableView.fxml", "All Customers",user,ctvc);

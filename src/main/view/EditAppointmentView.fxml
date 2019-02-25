@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="main.view.EditAppointmentViewController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.view.EditAppointmentViewController">
     <stylesheets>
         <URL value="@main.css" />
     </stylesheets>
@@ -29,19 +29,32 @@
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="Type" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <Label text="Date" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                  <Label text="Start Time" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                  <Label text="End Time" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                  <Label text="Date" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                  <Label text="Start Time" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                  <Label text="End Time" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
                   <ComboBox fx:id="typeComboBox" prefWidth="270.0" GridPane.columnIndex="1" />
-                  <DatePicker fx:id="appointmentDatePicker" prefWidth="270.0" promptText="select date" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Spinner fx:id="startTimeSpinner" prefWidth="270.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Spinner fx:id="endTimeSpinner" prefWidth="270.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <DatePicker fx:id="appointmentDatePicker" prefWidth="270.0" promptText="select date" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label layoutX="129.0" layoutY="18.0" text="Customer" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="customerComboBox" layoutX="290.0" layoutY="21.0" prefWidth="270.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <children>
+                        <Spinner fx:id="startTimeHourSpinner" prefHeight="39.0" prefWidth="135.0" />
+                        <Spinner fx:id="startTimeMinuteSpinner" prefHeight="39.0" prefWidth="135.0" />
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <children>
+                        <Spinner fx:id="endTimeHourSpinner" prefHeight="39.0" prefWidth="135.0" />
+                        <Spinner fx:id="endTimeMinuteSpinner" layoutX="10.0" layoutY="10.0" prefHeight="39.0" prefWidth="135.0" />
+                     </children>
+                  </HBox>
                </children>
             </GridPane>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">

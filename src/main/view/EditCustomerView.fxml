@@ -67,6 +67,7 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
             </HBox>
+            <Label fx:id="errorMessageLabel" text="ErrorMessageLabel" />
          </children>
       </VBox>
    </children>

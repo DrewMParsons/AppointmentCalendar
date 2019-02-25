@@ -5,17 +5,18 @@
  */
 package main.model;
 
-import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import javafx.beans.property.Property;
+import java.sql.Timestamp;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import main.utils.DataBaseConnector;
 
 /**
  *
@@ -24,6 +25,7 @@ import javafx.beans.property.StringProperty;
 public class Appointment
 {
 
+    private int appointmentID;
     private StringProperty Type;
     private int customerID;
     private int userID;
@@ -34,13 +36,27 @@ public class Appointment
     private StringProperty Day;
     private LocalDate date;
 
-    public Appointment(String type, int customerID, int userID, LocalDateTime startTime, LocalDateTime endTime)
+    public Appointment(int appointmentId, String type, int customerID, int userID, LocalDateTime startTime, LocalDateTime endTime)
     {
+        this.appointmentID = appointmentId;
         this.Type = new SimpleStringProperty(type);
         this.customerID = customerID;
         this.userID = userID;
         this.start = startTime;
         this.end = endTime;
+    }
+
+    public Appointment(String type, int customerID, int userID, LocalDate date, LocalTime startTime, LocalTime endTime)
+    {
+
+        this.Type = new SimpleStringProperty(type);
+        this.customerID = customerID;
+        this.userID = userID;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.start= LocalDateTime.of(date,startTime);
+        this.end=LocalDateTime.of(date, endTime);
     }
 
     /**
@@ -52,8 +68,9 @@ public class Appointment
      * @param start
      * @param end
      */
-    public Appointment(String type, int customerID, int userID, Date start, Date end)
+    public Appointment(int appointmentId, String type, int customerID, int userID, Timestamp start, Timestamp end)
     {
+        this.appointmentID = appointmentId;
         this.Type = new SimpleStringProperty(type);
         this.customerID = customerID;
         this.userID = userID;
@@ -66,11 +83,14 @@ public class Appointment
 
     }
 
-    public Appointment(String type, int customerID, int userID)
+    public int getAppointmentID()
     {
-        this.Type = new SimpleStringProperty(type);
-        this.customerID = customerID;
-        this.userID = userID;
+        return appointmentID;
+    }
+
+    public void setAppointmentID(int appointmentID)
+    {
+        this.appointmentID = appointmentID;
     }
 
     public LocalDate getDate()
@@ -82,6 +102,7 @@ public class Appointment
     {
         this.date = date;
     }
+
     public StringProperty DateProperty()
     {
         return new SimpleStringProperty(date.format(DateTimeFormatter.ofPattern("MMM dd")));
@@ -167,6 +188,11 @@ public class Appointment
         this.startTime = startTime;
     }
 
+    public StringProperty StartTimeProperty()
+    {
+        return new SimpleStringProperty(startTime.toString());
+    }
+
     public LocalTime getEndTime()
     {
         return endTime;
@@ -175,6 +201,58 @@ public class Appointment
     public void setEndTime(LocalTime endTime)
     {
         this.endTime = endTime;
+    }
+
+    public StringProperty EndTimeProperty()
+    {
+        return new SimpleStringProperty(endTime.toString());
+    }
+
+    /**
+     * This Method attempts to connect to the DB and delete the selected
+     * Appointment from the DB
+     *
+     * @param appointmentId
+     * @throws SQLException
+     */
+    public void deleteFromDB(int appointmentId) throws SQLException
+    {
+        String sqlDelete = "DELETE FROM appointment WHERE appointmentId =" + appointmentId + ";";
+        try (Connection conn = DataBaseConnector.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sqlDelete);)
+        {
+            ps.executeUpdate();
+        }
+    }
+
+    public void addInDB() throws SQLException
+    {
+
+        
+        String sqlAppointment = "INSERT INTO appointment (customerId,userId,type,start,end,createDate,createdBy,lastUpdate,LastUpdateBy) "
+                + "VALUES(?,?,?,?,?,?,?,?,?);";
+
+        try (Connection conn = DataBaseConnector.getConnection())
+        {
+            try (PreparedStatement ps = conn.prepareStatement(sqlAppointment))
+            {
+                ps.setInt(1, getCustomerID());
+                ps.setInt(2, getUserID());
+                ps.setString(3, getType());
+                ps.setObject(4, getStart());
+                ps.setObject(5, getEnd());
+                ps.setObject(6, LocalDateTime.now());
+                ps.setString(7, String.valueOf(userID));
+                ps.setObject(8, LocalDateTime.now());
+                ps.setString(9, String.valueOf(userID));
+                
+                ps.executeUpdate();
+
+            }catch(SQLException e)
+            {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 
 }
