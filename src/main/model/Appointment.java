@@ -160,6 +160,11 @@ public class Appointment
     {
         return customerName.get();
     }
+
+    public void setCustomerName(String cusName)
+    {
+        customerName.set(cusName);
+    }
     
 
     public int getUserID()
@@ -262,6 +267,35 @@ public class Appointment
                 
                 ps.executeUpdate();
 
+            }catch(SQLException e)
+            {
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Method updates an existing appointment in the DataBase
+     */
+    public void updateInDB(int appointmentId) throws SQLException
+    {
+        String sql = "UPDATE appointment SET customerId =?, userId =?, type =?, "
+                    +"start =?,end =?, lastUpdate =?,lastUpdateBy =? "
+                    +"WHERE appointmentId ="+appointmentId+";";
+        
+        try (Connection conn = DataBaseConnector.getConnection())
+        {
+            try(PreparedStatement ps = conn.prepareStatement(sql);)
+            {
+                ps.setInt(1, getCustomerID());//customerID
+                ps.setInt(2, userID);//userId
+                ps.setString(3, getType());//type
+                ps.setObject(4, getStart());//start
+                ps.setObject(5, getEnd());//end
+                ps.setObject(6, LocalDateTime.now());//lastUpdate
+                ps.setString(7,String.valueOf(userID));//lastUpdateBy
+                
+                ps.executeUpdate();
             }catch(SQLException e)
             {
                 System.err.println(e.getMessage());

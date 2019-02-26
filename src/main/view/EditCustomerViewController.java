@@ -204,7 +204,7 @@ public class EditCustomerViewController implements Initializable, ControllerInte
 
     /**
      * Method will attempt to connect to the DB and insert a new Customer
-     *
+     * or update a current customer
      * @param event
      * @throws IOException
      */

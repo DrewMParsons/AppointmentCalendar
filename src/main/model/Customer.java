@@ -10,7 +10,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.HashMap;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import main.utils.DataBaseConnector;
@@ -312,6 +314,32 @@ public class Customer
         {
             ps.executeUpdate();
         }
+    }
+    /**
+     * This Method connects to DB and returns a HASH MAP of customer NAME and ID
+     * @return
+     * @throws SQLException 
+     */
+    public HashMap<String,Integer> initCustomerHashMap() throws SQLException
+    {
+        HashMap<String,Integer> customerHashMap = new HashMap();
+        String sql = ("SELECT customerName, customerId  FROM customer");
+        // Connect to DB
+        try (Connection conn = DataBaseConnector.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql))
+        {
+            while (rs.next())
+            {
+                customerHashMap.put(rs.getString(1),rs.getInt(2));
+                
+            }
+
+        } catch (SQLException e)
+        {
+            System.err.println(e.getMessage());
+        }
+        return customerHashMap;
     }
 
 }

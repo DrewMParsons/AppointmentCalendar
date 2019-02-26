@@ -75,6 +75,7 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @FXML
     private ToggleButton weeklyToggleButton;
     private User user;
+    private Appointment appointment;
     private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
     
 
@@ -140,7 +141,7 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @FXML
     private void deleteAppointmentButtonHandler(ActionEvent event) throws SQLException
     {
-        Appointment appointment = this.appointmentTableView.getSelectionModel().getSelectedItem();
+        appointment = this.appointmentTableView.getSelectionModel().getSelectedItem();
         
         if(deleteAlert(" The Selected Appointment"))
         {
@@ -155,7 +156,7 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @FXML
     private void editAppointmentButtonHandler(ActionEvent event) throws IOException
     {
-        Appointment appointment = this.appointmentTableView.getSelectionModel().getSelectedItem();
+        appointment = this.appointmentTableView.getSelectionModel().getSelectedItem();
         SceneChanger sc = new SceneChanger();
         EditAppointmentViewController eavc = new EditAppointmentViewController();
         sc.changeScenes(event, "EditAppointmentView.fxml", "Edit Appointment",appointment,eavc);

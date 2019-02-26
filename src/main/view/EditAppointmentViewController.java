@@ -138,29 +138,60 @@ public class EditAppointmentViewController implements Initializable, ControllerI
         endTimeHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(9, 17,appointment.getEndTime().getHour()));
         startTimeMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59,appointment.getStartTime().getMinute()));
         endTimeMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59,appointment.getEndTime().getMinute()));
+        customerComboBox.setValue(appointment.getCustomerName());
+        typeComboBox.setValue(appointment.getType());
+        appointmentDatePicker.setValue(appointment.getDate());
         
     }
+    /**
+     * Method will attempt to connect to DB and update the appointment if it 
+     * is an existing appointment, or add a new appointment
+     * @param event
+     * @throws IOException 
+     */
     @FXML
-    private void savebuttonHandler(ActionEvent event) throws IOException
+    private void savebuttonHandler(ActionEvent event) throws IOException, SQLException
     {
         int customerId = customerHashMap.get(customerComboBox.getValue());
         Time startTime = new Time(startTimeHourSpinner.getValue(),startTimeMinuteSpinner.getValue(),0);
         Time endTime = new Time(endTimeHourSpinner.getValue(),endTimeMinuteSpinner.getValue(),0);
-        Appointment appointment = new Appointment(typeComboBox.getValue(), customerId, customerComboBox.getValue(),
-                LoginViewController.USERID, appointmentDatePicker.getValue(),
-                startTime.toLocalTime(), endTime.toLocalTime());
-        System.out.println(appointment.getStart().toString());
-        try
+        if(appointment !=null)
         {
-            appointment.addInDB();
-        } catch (SQLException ex)
+            updateAppointment(customerId,startTime, endTime);
+            appointment.updateInDB(appointment.getAppointmentID());
+        }
+        else
         {
-            Logger.getLogger(EditAppointmentViewController.class.getName()).log(Level.SEVERE, null, ex);
+            Appointment appointment = new Appointment(typeComboBox.getValue(), customerId, customerComboBox.getValue(),
+                    LoginViewController.USERID, appointmentDatePicker.getValue(),
+                    startTime.toLocalTime(), endTime.toLocalTime());
+
+            try
+            {
+                appointment.addInDB();
+            } catch (SQLException ex)
+            {
+                Logger.getLogger(EditAppointmentViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         saveAlert();
         
         SceneChanger sc = new SceneChanger();
         sc.changeScenes(event, "AppointmentView.fxml", "Appointments");
+        
+    }
+
+    private void updateAppointment(int customerId,Time startTime,Time endTime)
+    {
+        
+        
+        appointment.setCustomerName(customerComboBox.getValue());
+        appointment.setCustomerID(customerId);
+        appointment.setDate(appointmentDatePicker.getValue());
+        appointment.setUserID(LoginViewController.USERID);
+        appointment.setStartTime(startTime.toLocalTime());
+        appointment.setEndTime(endTime.toLocalTime());
+        
         
     }
     
