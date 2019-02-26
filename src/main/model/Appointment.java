@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import main.utils.DataBaseConnector;
+import main.view.EditAppointmentViewController;
 
 /**
  *
@@ -28,6 +29,7 @@ public class Appointment
     private int appointmentID;
     private StringProperty Type;
     private int customerID;
+    private StringProperty customerName;
     private int userID;
     private LocalDateTime start;
     private LocalDateTime end;
@@ -46,11 +48,12 @@ public class Appointment
         this.end = endTime;
     }
 
-    public Appointment(String type, int customerID, int userID, LocalDate date, LocalTime startTime, LocalTime endTime)
+    public Appointment(String type, int customerID, String customerName,int userID, LocalDate date, LocalTime startTime, LocalTime endTime)
     {
 
         this.Type = new SimpleStringProperty(type);
         this.customerID = customerID;
+        this.customerName = new SimpleStringProperty(customerName);
         this.userID = userID;
         this.date = date;
         this.startTime = startTime;
@@ -68,8 +71,9 @@ public class Appointment
      * @param start
      * @param end
      */
-    public Appointment(int appointmentId, String type, int customerID, int userID, Timestamp start, Timestamp end)
+    public Appointment(String customerName, int appointmentId, String type, int customerID, int userID, Timestamp start, Timestamp end)
     {
+        this.customerName = new SimpleStringProperty(customerName);
         this.appointmentID = appointmentId;
         this.Type = new SimpleStringProperty(type);
         this.customerID = customerID;
@@ -147,6 +151,16 @@ public class Appointment
     {
         this.customerID = customerID;
     }
+
+    public StringProperty CustomerNameProperty()
+    {
+        return customerName;
+    }
+    public String getCustomerName()
+    {
+        return customerName.get();
+    }
+    
 
     public int getUserID()
     {

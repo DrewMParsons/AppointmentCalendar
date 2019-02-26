@@ -59,6 +59,8 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @FXML
     private TableColumn<Appointment, String> endTimeColumn;
     @FXML
+    private TableColumn<Appointment, String> customerColumn;
+    @FXML
     private Button addAppointmentButton;
     @FXML
     private Button editAppointmentButton;
@@ -73,6 +75,8 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @FXML
     private ToggleButton weeklyToggleButton;
     private User user;
+    private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+    
 
     /**
      * Initializes the controller class.
@@ -92,6 +96,7 @@ public class AppointmentViewController implements Initializable, ControllerInter
         startTimeColumn.setCellValueFactory(cellData -> cellData.getValue().StartTimeProperty());
         endTimeColumn.setCellValueFactory(cellData -> cellData.getValue().EndTimeProperty());
         dateColumn.setCellValueFactory(cellData -> cellData.getValue().DateProperty());
+        customerColumn.setCellValueFactory(cellData -> cellData.getValue().CustomerNameProperty());
 
         {
 
@@ -140,7 +145,9 @@ public class AppointmentViewController implements Initializable, ControllerInter
         if(deleteAlert(" The Selected Appointment"))
         {
             appointment.deleteFromDB(appointment.getAppointmentID());
+            appointmentTableView.getItems().remove(appointment);
         }
+        
 
         
     }
@@ -157,9 +164,9 @@ public class AppointmentViewController implements Initializable, ControllerInter
     private void loadAppointments() throws SQLException
     {
 
-        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-        String sql = "SELECT appointmentId, customerId, type, start, end "
-                + "FROM appointment WHERE userId =" + LoginViewController.USERID + ";";
+        
+        String sql = "SELECT customer.customerName,appointment.customerId, appointmentId, type, start, end "
+                + "FROM customer,appointment WHERE appointment.customerId=customer.customerId AND userId =" + LoginViewController.USERID + ";";
 
         try (Connection conn = DataBaseConnector.getConnection();
                 Statement statement = conn.createStatement();
@@ -167,13 +174,13 @@ public class AppointmentViewController implements Initializable, ControllerInter
         {
             while (rs.next())
             {
-                Appointment newAppointment = new Appointment(rs.getInt("appointmentId"),
-                        rs.getString("type"),
+                Appointment newAppointment = new Appointment(rs.getString("customerName"),
+                        rs.getInt("appointmentId"),rs.getString("type"),
                         rs.getInt("customerId"), LoginViewController.USERID,
-                       
                         rs.getTimestamp("start"), rs.getTimestamp("end"));
-
+                
                 appointments.add(newAppointment);
+                
             }
 
             appointmentTableView.getItems().addAll(appointments);

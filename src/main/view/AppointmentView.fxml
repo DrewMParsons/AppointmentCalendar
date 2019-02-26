@@ -25,11 +25,12 @@
             <Label id="header" styleClass="header" text="Appointments" />
             <TableView fx:id="appointmentTableView" onMouseClicked="#appointmentSelected" prefHeight="375.0" prefWidth="760.0">
               <columns>
-                <TableColumn fx:id="typeColumn" prefWidth="97.0" text="Type" />
-                  <TableColumn fx:id="dayOfWeekColumn" prefWidth="136.0" text="Day" />
-                  <TableColumn fx:id="dateColumn" minWidth="0.0" prefWidth="131.0" text="Date" />
-                <TableColumn fx:id="startTimeColumn" minWidth="8.0" prefWidth="162.0" text="Start" />
-                  <TableColumn fx:id="endTimeColumn" minWidth="0.0" prefWidth="128.0" text="End" />
+                  <TableColumn fx:id="customerColumn" minWidth="0.0" prefWidth="107.0" text="Customer" />
+                <TableColumn fx:id="typeColumn" prefWidth="103.0" text="Type" />
+                  <TableColumn fx:id="dayOfWeekColumn" prefWidth="110.0" text="Day" />
+                  <TableColumn fx:id="dateColumn" minWidth="0.0" prefWidth="84.0" text="Date" />
+                <TableColumn fx:id="startTimeColumn" minWidth="8.0" prefWidth="116.0" text="Start" />
+                  <TableColumn fx:id="endTimeColumn" minWidth="0.0" prefWidth="97.0" text="End" />
               </columns>
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

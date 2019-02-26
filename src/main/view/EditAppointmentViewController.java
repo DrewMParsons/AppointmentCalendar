@@ -146,7 +146,7 @@ public class EditAppointmentViewController implements Initializable, ControllerI
         int customerId = customerHashMap.get(customerComboBox.getValue());
         Time startTime = new Time(startTimeHourSpinner.getValue(),startTimeMinuteSpinner.getValue(),0);
         Time endTime = new Time(endTimeHourSpinner.getValue(),endTimeMinuteSpinner.getValue(),0);
-        Appointment appointment = new Appointment(typeComboBox.getValue(), customerId, 
+        Appointment appointment = new Appointment(typeComboBox.getValue(), customerId, customerComboBox.getValue(),
                 LoginViewController.USERID, appointmentDatePicker.getValue(),
                 startTime.toLocalTime(), endTime.toLocalTime());
         System.out.println(appointment.getStart().toString());
