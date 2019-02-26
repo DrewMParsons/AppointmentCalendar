@@ -47,12 +47,13 @@
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <ToggleButton id="button" fx:id="monthlyToggleButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="100.0" styleClass="button" text="Month">
+                  <ToggleButton id="button" fx:id="monthlyToggleButton" mnemonicParsing="false" onAction="#monthlyToggleButtonHandler" prefHeight="36.0" prefWidth="100.0" styleClass="button" text="Month">
                      <toggleGroup>
                         <ToggleGroup fx:id="calendarTypeToggleButtonGroup" />
                      </toggleGroup>
                   </ToggleButton>
-                  <ToggleButton id="button" fx:id="weeklyToggleButton" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="36.0" prefWidth="100.0" styleClass="button" text="Week" toggleGroup="$calendarTypeToggleButtonGroup" />
+                  <ToggleButton id="button" fx:id="weeklyToggleButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#weeklyToggleButtonHandler" prefHeight="36.0" prefWidth="100.0" styleClass="button" text="Week" toggleGroup="$calendarTypeToggleButtonGroup" />
+                  <ToggleButton id="button" fx:id="allToggleButton" contentDisplay="CENTER" layoutX="640.0" layoutY="40.0" mnemonicParsing="false" onAction="#allToggleButtonHandler" prefHeight="36.0" prefWidth="69.0" styleClass="button" text="All" toggleGroup="$calendarTypeToggleButtonGroup" />
                </children>
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

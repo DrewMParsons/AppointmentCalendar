@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -74,6 +75,9 @@ public class AppointmentViewController implements Initializable, ControllerInter
     private ToggleGroup calendarTypeToggleButtonGroup;
     @FXML
     private ToggleButton weeklyToggleButton;
+    @FXML
+    private ToggleButton allToggleButton;
+    
     private User user;
     private Appointment appointment;
     private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -85,8 +89,10 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        //Set ALL apointment toggle button to ON
+        allToggleButton.setSelected(true);
         
-        System.out.println("User ID:" + LoginViewController.USERID);
+        
         // Disable Edit and Delete Appointment Buttons
         editAppointmentButton.setDisable(true);
         deleteAppointmentButton.setDisable(true);
@@ -198,5 +204,79 @@ public class AppointmentViewController implements Initializable, ControllerInter
         this.user = user;
 
     }
+    /**
+     * This method adjusts the TableView to list all appointments when the
+     * ALL ToggleButton is pushed
+     */
+    @FXML
+    private void allToggleButtonHandler(ActionEvent event)
+    {
+        appointmentTableView.getItems().clear();
+        appointmentTableView.getItems().addAll(appointments);
+            
+    }
+    /**
+     * This method adjusts the TableView to the current MONTH when the
+     * monthly ToggleButton is pushed
+     */
+    @FXML
+    private void monthlyToggleButtonHandler(ActionEvent event)
+    {
+        appointmentTableView.getItems().clear();
+            for(Appointment a : appointments)
+            {
+                if(a.getDate().getMonthValue()==LocalDate.now().getMonthValue())
+                    appointmentTableView.getItems().add(a);
+            }
+    }
+    
+    
+    /**
+     * This method adjusts the TableView to the current week when the
+     * weekly ToggleButton is pushed
+     */
+    @FXML
+    private void weeklyToggleButtonHandler(ActionEvent event)
+    {
+        appointmentTableView.getItems().clear();
+            for(Appointment a : appointments)
+            {
+                if(a.getDate().compareTo(currentWeekStart())>-1 && a.getDate().compareTo(currentWeekEnd())<1)
+                    appointmentTableView.getItems().add(a);
+            }
+    }
+    
+    /**
+     * This Method returns the Start date of the current week
+     */
+    private LocalDate currentWeekStart()
+    {
+        LocalDate today = LocalDate.now();
+        
+        //start of week-MONDAY
+        LocalDate monday = today;
+        while(monday.getDayOfWeek() != DayOfWeek.MONDAY)
+        {
+            monday = monday.minusDays(1);
+        }
+        
+        return monday;
+    }
+    /**
+     * This Method returns the End date of the current week
+     */
+    private LocalDate currentWeekEnd()
+    {
+        LocalDate today = LocalDate.now();
+        
+        //End of week=Sunday
+        LocalDate sunday = today;
+        while(sunday.getDayOfWeek() != DayOfWeek.SUNDAY)
+        {
+            sunday = sunday.plusDays(1);
+        }
+        return sunday;
+    }
+   
 
 }
