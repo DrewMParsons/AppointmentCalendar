@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,7 +36,7 @@ public class ReportsViewController implements Initializable
     @FXML
     private Label reportsHeaderLabel;
     @FXML
-    private BarChart<?, ?> reportsBarChart;
+    private BarChart<String, Integer> reportsBarChart;
     @FXML
     private NumberAxis appointmentCount;
     @FXML
@@ -56,7 +58,26 @@ public class ReportsViewController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        reportsBarChart.getData().clear();
+        casualSeries = new XYChart.Series<>();
+        generalSeries = new XYChart.Series<>();
+        presentationSeries = new XYChart.Series<>();
+        contractSeries = new XYChart.Series<>();
+
+        casualSeries.setName("Casual");
+        generalSeries.setName("General");
+        presentationSeries.setName("Presentation");
+        contractSeries.setName("Contract");
+        try
+        {
+            populateTypeByMonthFromDB();
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(ReportsViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        reportsBarChart.getData().addAll(casualSeries);
+        reportsBarChart.getData().addAll(generalSeries);
+        reportsBarChart.getData().addAll(presentationSeries);
+        reportsBarChart.getData().addAll(contractSeries);
 
     }
 
@@ -71,6 +92,7 @@ public class ReportsViewController implements Initializable
     private void typeButtonHandler(ActionEvent event)
     {
         reportsBarChart.getData().clear();
+        reportsBarChart.setTitle("Appointment Types by Month");
         casualSeries = new XYChart.Series<>();
         generalSeries = new XYChart.Series<>();
         presentationSeries = new XYChart.Series<>();
@@ -137,22 +159,13 @@ public class ReportsViewController implements Initializable
     private void populateUserByMonth() throws SQLException
     {
         HashMap<String, XYChart.Series> seriesName = new HashMap();
-//        int count;
-//        String sqlUserCount = "Select COUNT(userId) From user;";
+
         String sql = "SELECT user.username , COUNT(appointment.userId), monthname(start) "
                 + "FROM user, appointment "
                 + "WHERE appointment.userId = user.userId "
                 + "GROUP BY userName, MONTH(start) "
                 + "ORDER BY MONTH(start); ";
 
-//        //connect to DB
-//        //return total amount of users
-//        try(Connection conn = DataBaseConnector.getConnection();
-//            Statement stmt = conn.createStatement();
-//            ResultSet rs = stmt.executeQuery(sqlUserCount);)
-//        {
-//            count = rs.getInt(1);
-//        }
         //create series for each user
         //run SQL and populate the bar graph
         try (Connection conn = DataBaseConnector.getConnection();
@@ -165,8 +178,7 @@ public class ReportsViewController implements Initializable
                 if (seriesName.containsKey(rs.getString(1)))
                 {
                     seriesName.get(rs.getString(1)).getData().add(new XYChart.Data(rs.getString(3), rs.getInt(2)));
-                } 
-                //else create and populate new series
+                } //else create and populate new series
                 else
                 {
                     XYChart.Series newSeries = new XYChart.Series<>();
@@ -195,6 +207,7 @@ public class ReportsViewController implements Initializable
     private void usersButtonHandler(ActionEvent event) throws SQLException
     {
         reportsBarChart.getData().clear();
+        reportsBarChart.setTitle("Appointments per User by Month");
         populateUserByMonth();
     }
 

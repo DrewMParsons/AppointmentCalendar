@@ -63,6 +63,8 @@ public class CustomerTableViewController implements Initializable, ControllerInt
     /**
      * Initializes the controller class. Lambda expression is used to set the
      * values of the table columns
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb)
@@ -71,7 +73,8 @@ public class CustomerTableViewController implements Initializable, ControllerInt
         // Disable Edit and Delete Customer Buttons
         editCustomerButton.setDisable(true);
 
-        //Config Table Columns
+        
+        //Lambda expression used to Config Table Columns
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().CustomerNameProperty());
         streetColumn.setCellValueFactory(cellData -> cellData.getValue().AddressProperty());
         phoneColumn.setCellValueFactory(cellData -> cellData.getValue().PhoneProperty());
@@ -183,6 +186,10 @@ public class CustomerTableViewController implements Initializable, ControllerInt
 
     }
 
+    /**
+     *
+     * @param user
+     */
     @Override
     public void preloadData(User user)
     {
