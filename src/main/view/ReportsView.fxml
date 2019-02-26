@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.view.ReportsViewController">
+    <stylesheets>
+        <URL value="@main.css" />
+    </stylesheets>
+   <children>
+      <VBox alignment="TOP_CENTER" layoutX="281.0" layoutY="161.0" prefHeight="600.0" prefWidth="800.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label id="header" fx:id="reportsHeaderLabel" styleClass="header" text="Reports" />
+            <BarChart fx:id="reportsBarChart" title="Appointment Types by Month">
+              <xAxis>
+                <CategoryAxis fx:id="month" label="Months" side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis fx:id="appointmentCount" label="Appointments" side="LEFT" />
+              </yAxis>
+            </BarChart>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+               <children>
+                  <Button fx:id="typeButton" mnemonicParsing="false" onAction="#typeButtonHandler" prefWidth="101.0" text="Type" />
+                  <Button fx:id="usersButton" mnemonicParsing="false" onAction="#usersButtonHandler" prefWidth="101.0" text="Users" />
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonHandler" prefWidth="101.0" text="Back" />
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

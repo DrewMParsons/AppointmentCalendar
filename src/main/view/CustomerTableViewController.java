@@ -176,8 +176,10 @@ public class CustomerTableViewController implements Initializable, ControllerInt
     }
 
     @FXML
-    private void reportsButtonHandler(ActionEvent event)
+    private void reportsButtonHandler(ActionEvent event) throws IOException
     {
+        SceneChanger sc = new SceneChanger();
+        sc.changeScenes(event, "ReportsView.fxml", "Reports");
 
     }
 
