@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -82,6 +83,7 @@ public class EditAppointmentViewController implements Initializable, ControllerI
         {
             Logger.getLogger(EditAppointmentViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        //initialize the Type combo box
         initType();
         
         
@@ -110,9 +112,7 @@ public class EditAppointmentViewController implements Initializable, ControllerI
             System.err.println(e.getMessage());
         }
     }
-    /**
-     * Method initialized the StartTime Spinner
-     */
+    
     /**
      * Adds appointment types to the types combobox
      */
@@ -162,17 +162,12 @@ public class EditAppointmentViewController implements Initializable, ControllerI
         }
         else
         {
-            Appointment appointment = new Appointment(typeComboBox.getValue(), customerId, customerComboBox.getValue(),
+             appointment = new Appointment(typeComboBox.getValue(), customerId, customerComboBox.getValue(),
                     LoginViewController.USERID, appointmentDatePicker.getValue(),
                     startTime.toLocalTime(), endTime.toLocalTime());
 
-            try
-            {
-                appointment.addInDB();
-            } catch (SQLException ex)
-            {
-                Logger.getLogger(EditAppointmentViewController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+             appointment.addInDB();
+            
         }
         saveAlert();
         
@@ -187,10 +182,19 @@ public class EditAppointmentViewController implements Initializable, ControllerI
         
         appointment.setCustomerName(customerComboBox.getValue());
         appointment.setCustomerID(customerId);
+        appointment.setType(typeComboBox.getValue());
         appointment.setDate(appointmentDatePicker.getValue());
         appointment.setUserID(LoginViewController.USERID);
         appointment.setStartTime(startTime.toLocalTime());
+        appointment.setStart(LocalDateTime.of(appointment.getDate(),appointment.getStartTime()));
         appointment.setEndTime(endTime.toLocalTime());
+        appointment.setEnd(LocalDateTime.of(appointment.getDate(),appointment.getEndTime()));
+        System.out.println(appointment.getCustomerName());
+        System.out.println(appointment.getStartTime());
+        System.out.println(appointment.getDate());
+        System.out.println(appointment.getEndTime());
+        System.out.println(appointment.getType());
+        System.out.println(appointment.getStart());
         
         
     }

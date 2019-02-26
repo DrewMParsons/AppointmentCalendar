@@ -276,6 +276,8 @@ public class Appointment
 
     /**
      * Method updates an existing appointment in the DataBase
+     * @param appointmentId
+     * @throws java.sql.SQLException
      */
     public void updateInDB(int appointmentId) throws SQLException
     {
