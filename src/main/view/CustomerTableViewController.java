@@ -149,6 +149,7 @@ public class CustomerTableViewController implements Initializable, ControllerInt
      * This method will connect to the Database and load the Customers into the
      * Customer TableView
      */
+    
     private void loadCustomers() throws SQLException
     {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
@@ -194,6 +195,7 @@ public class CustomerTableViewController implements Initializable, ControllerInt
     public void preloadData(User user)
     {
         this.user = user;
+        
         
     }
 

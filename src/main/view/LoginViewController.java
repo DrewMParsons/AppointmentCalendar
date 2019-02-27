@@ -101,7 +101,7 @@ public class LoginViewController implements Initializable
             
             while (rs.next())
             {
-                //String dbPassword = rs.getString("password");
+                
                 
                 user = new User(rs.getInt("userId"),
                                 rs.getString("userName"), 
@@ -116,6 +116,7 @@ public class LoginViewController implements Initializable
                 SceneChanger.setLoggedInUser(user);
                 CustomerTableViewController ctvc = new CustomerTableViewController();
                 sc.changeScenes(event, "CustomerTableView.fxml", "All Customers",user,ctvc);
+                
             }
             else
             {

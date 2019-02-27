@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
@@ -77,20 +79,40 @@ public class AppointmentViewController implements Initializable, ControllerInter
     private ToggleButton weeklyToggleButton;
     @FXML
     private ToggleButton allToggleButton;
+    @FXML
+    private ComboBox<String> userComboBox;
     
     private User user;
     private Appointment appointment;
     private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+    public HashMap<String,Integer> userHashMap = new HashMap<String,Integer>();
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
     
 
+    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        this.user=SceneChanger.getLoggedInUser();
+        
+        //initalize the user combo box to current user
+        userComboBox.setValue(user.getUserName());
+        
         //Set ALL apointment toggle button to ON
-        allToggleButton.setSelected(true);
+        //allToggleButton.setSelected(true);
+        
         
         
         // Disable Edit and Delete Appointment Buttons
@@ -109,6 +131,7 @@ public class AppointmentViewController implements Initializable, ControllerInter
 
             try
             {
+                initUser();
                 loadAppointments();
 
             } catch (SQLException e)
@@ -154,9 +177,7 @@ public class AppointmentViewController implements Initializable, ControllerInter
             appointment.deleteFromDB(appointment.getAppointmentID());
             appointmentTableView.getItems().remove(appointment);
         }
-        
-
-        
+         
     }
 
     @FXML
@@ -167,13 +188,35 @@ public class AppointmentViewController implements Initializable, ControllerInter
         EditAppointmentViewController eavc = new EditAppointmentViewController();
         sc.changeScenes(event, "EditAppointmentView.fxml", "Edit Appointment",appointment,eavc);
     }
+    
+    private void initUser() throws SQLException
+    {
+        String sql = "SELECT userName, userId FROM user;";
+        
+        // Connect to DB
+        try (Connection conn = DataBaseConnector.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql))
+        {
+            while (rs.next())
+            {
+                
+                userComboBox.getItems().add(rs.getString(1));
+                userHashMap.put(rs.getString(1),rs.getInt(2));
+            }
 
+        } catch (SQLException e)
+        {
+            System.err.println(e.getMessage());
+        }
+        
+    }
+    
     private void loadAppointments() throws SQLException
     {
-
         
-        String sql = "SELECT customer.customerName,appointment.customerId, appointmentId, type, start, end "
-                + "FROM customer,appointment WHERE appointment.customerId=customer.customerId AND userId =" + LoginViewController.USERID + ";";
+        String sql = "SELECT customer.customerName,appointment.customerId, appointmentId, type, userId,start, end "
+                + "FROM customer,appointment WHERE appointment.customerId=customer.customerId;";
 
         try (Connection conn = DataBaseConnector.getConnection();
                 Statement statement = conn.createStatement();
@@ -183,14 +226,14 @@ public class AppointmentViewController implements Initializable, ControllerInter
             {
                 Appointment newAppointment = new Appointment(rs.getString("customerName"),
                         rs.getInt("appointmentId"),rs.getString("type"),
-                        rs.getInt("customerId"), LoginViewController.USERID,
+                        rs.getInt("customerId"), rs.getInt("userId"),
                         rs.getTimestamp("start"), rs.getTimestamp("end"));
                 
                 appointments.add(newAppointment);
                 
             }
 
-            appointmentTableView.getItems().addAll(appointments);
+            //appointmentTableView.getItems().addAll(appointments);
         } catch (SQLException e)
         {
             System.err.println(e.getMessage());
@@ -199,9 +242,11 @@ public class AppointmentViewController implements Initializable, ControllerInter
     }
 
     @Override
-    public void preloadData(User user)
+    public void preloadData(User u)
     {
-        this.user = user;
+        this.user=u;
+        
+        
 
     }
     /**
@@ -212,7 +257,15 @@ public class AppointmentViewController implements Initializable, ControllerInter
     private void allToggleButtonHandler(ActionEvent event)
     {
         appointmentTableView.getItems().clear();
-        appointmentTableView.getItems().addAll(appointments);
+        int userID = userHashMap.get(userComboBox.getValue());
+        appointments.stream().filter((a) ->
+        {
+            return (a.getUserID()==userID);
+        }).forEachOrdered((a) ->
+        {
+         appointmentTableView.getItems().addAll(a);   
+        });
+        
             
     }
     /**
@@ -223,13 +276,33 @@ public class AppointmentViewController implements Initializable, ControllerInter
     private void monthlyToggleButtonHandler(ActionEvent event)
     {
         appointmentTableView.getItems().clear();
-            for(Appointment a : appointments)
-            {
-                if(a.getDate().getMonthValue()==LocalDate.now().getMonthValue())
-                    appointmentTableView.getItems().add(a);
-            }
+        int userID = userHashMap.get(userComboBox.getValue());
+        appointments.stream().filter((a) ->
+        {
+            return a.getDate().getMonthValue()==LocalDate.now().getMonthValue()&&
+                    (a.getUserID()==userID);
+        }).forEachOrdered((a) ->
+        {
+            appointmentTableView.getItems().add(a);
+        });
     }
-    
+    /**
+     * This method adjusts the TableView to display appointments for the user 
+     * specified in the User ComboBox
+     * @param event 
+     */
+    @FXML
+    private void userComboBoxHandler(ActionEvent event)
+    {
+        appointmentTableView.getItems().clear();
+        int userID = userHashMap.get(userComboBox.getValue());
+        appointments.stream().filter((a) -> 
+                (a.getUserID()==userID)).forEachOrdered((a) ->
+        {
+            appointmentTableView.getItems().add(a);
+        });
+        
+    }
     
     /**
      * This method adjusts the TableView to the current week when the
@@ -238,12 +311,18 @@ public class AppointmentViewController implements Initializable, ControllerInter
     @FXML
     private void weeklyToggleButtonHandler(ActionEvent event)
     {
+        
+        int userID = userHashMap.get(userComboBox.getValue());
         appointmentTableView.getItems().clear();
-            for(Appointment a : appointments)
-            {
-                if(a.getDate().compareTo(currentWeekStart())>-1 && a.getDate().compareTo(currentWeekEnd())<1)
-                    appointmentTableView.getItems().add(a);
-            }
+        appointments.stream().filter((a) ->
+        {
+            return (a.getDate().compareTo(currentWeekStart())>-1 && 
+                    a.getDate().compareTo(currentWeekEnd())<1)&&
+                    (a.getUserID()==userID);
+        }).forEachOrdered((a) ->
+        {
+            appointmentTableView.getItems().add(a);
+        });
     }
     
     /**
