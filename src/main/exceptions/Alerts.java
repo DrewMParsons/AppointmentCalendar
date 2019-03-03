@@ -15,11 +15,13 @@ public class Alerts {
      * Basic Alert Error dialog is opened
      *
      * @param alertText
+     * @return 
      */
-    public static void errorAlert(String alertText) {
+    public static boolean errorAlert(String alertText) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(alertText);
         Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.OK;
     }
 
     /**

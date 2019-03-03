@@ -7,17 +7,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import main.exceptions.Alerts;
+import main.model.Appointment;
 import main.model.User;
 import main.utils.DataBaseConnector;
 
@@ -44,6 +51,7 @@ public class LoginViewController implements Initializable
     @FXML
     private Button loginButton;
     private User user;
+    private  ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
     public User getUser()
     {
@@ -53,6 +61,16 @@ public class LoginViewController implements Initializable
     public void setUser(User user)
     {
         this.user = user;
+    }
+
+    public ObservableList<Appointment> getAppointments()
+    {
+        return appointments;
+    }
+
+    public void setAppointments(ObservableList<Appointment> appointments)
+    {
+        this.appointments = appointments;
     }
     
     
@@ -79,6 +97,34 @@ public class LoginViewController implements Initializable
         
         
         
+    }
+    private void loadAppointments() throws SQLException
+    {
+        
+        String sql = "SELECT customer.customerName,appointment.customerId, appointmentId, type, userId,start, end "
+                + "FROM customer,appointment WHERE appointment.customerId=customer.customerId;";
+
+        try (Connection conn = DataBaseConnector.getConnection();
+                Statement statement = conn.createStatement();
+                ResultSet rs = statement.executeQuery(sql);)
+        {
+            while (rs.next())
+            {
+                Appointment newAppointment = new Appointment(rs.getString("customerName"),
+                        rs.getInt("appointmentId"),rs.getString("type"),
+                        rs.getInt("customerId"), rs.getInt("userId"),
+                        rs.getTimestamp("start"), rs.getTimestamp("end"));
+                
+                appointments.add(newAppointment);
+                
+            }
+
+            
+        } catch (SQLException e)
+        {
+            System.err.println(e.getMessage());
+        }
+
     }
     
 
@@ -110,6 +156,18 @@ public class LoginViewController implements Initializable
             }
             if( user!=null && pwEntered.equals(user.getPassword()))
             {
+                loadAppointments();
+                for(Appointment a : appointments)
+                {
+                    if(a.getDate().equals(LocalDate.now()))
+                    {
+                        if(a.getStartTime().isAfter(LocalTime.now()) && a.getStartTime().isBefore(LocalTime.now().plusMinutes(15)))
+                                {
+                                    Alerts.errorAlert("You have an appointment within 15 minutes of now");
+                                  
+                                }
+                    }
+                }
                 SceneChanger sc = new SceneChanger();
                 USERID = user.getUserID();
                 USERNAME= user.getUserName();

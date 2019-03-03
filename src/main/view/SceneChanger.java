@@ -63,76 +63,7 @@ public class SceneChanger<T>
         stage.show();
     }
     
-    /**
-     * This method will handleEvent by changing scenes, setting title for new
-     * scene, and preload the new scene with the object provided
-     * @param event
-     * @param viewName
-     * @param title
-     * @param customer
-     * @param controller
-     * @throws java.io.IOException
-     */
-//    public void changeScenes(ActionEvent event, String viewName, String title,Customer customer,ControllerInterface controller) throws IOException
-//    {
-//        FXMLLoader loader = new FXMLLoader();
-//        loader.setLocation(getClass().getResource(viewName));
-//        Parent parent = loader.load();
-//        
-//        Scene scene = new Scene(parent);
-//        
-//        //access the controller class and preload the  data
-//        controller = loader.getController();
-//        controller.preloadData(customer);
-//        
-//        //get the stage from the event that was passed in
-//        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-//        
-//        stage.setTitle(title);
-//        stage.setScene(scene);
-//        stage.show();
-//        
-//    }
-//
-//    
-//    public void changeScenes(ActionEvent event, String viewName, String title, User user, ControllerInterface controller) throws IOException
-//    {
-//        FXMLLoader loader = new FXMLLoader();
-//        loader.setLocation(getClass().getResource(viewName));
-//        Parent parent = loader.load();
-//        
-//        Scene scene = new Scene(parent);
-//        
-//        //access the controller class and preload the  data
-//        controller = loader.getController();
-//        controller.preloadData(user);
-//        
-//        //get the stage from the event that was passed in
-//        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-//        
-//        stage.setTitle(title);
-//        stage.setScene(scene);
-//        stage.show();
-//    }
-//        public void changeScenes(ActionEvent event, String viewName, String title, Appointment appointment, ControllerInterface controller) throws IOException
-//    {
-//        FXMLLoader loader = new FXMLLoader();
-//        loader.setLocation(getClass().getResource(viewName));
-//        Parent parent = loader.load();
-//        
-//        Scene scene = new Scene(parent);
-//        
-//        //access the controller class and preload the  data
-//        controller = loader.getController();
-//        controller.preloadData(appointment);
-//        
-//        //get the stage from the event that was passed in
-//        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-//        
-//        stage.setTitle(title);
-//        stage.setScene(scene);
-//        stage.show();
-//    }
+   
         public void changeScenes(ActionEvent event, String viewName, String title, T t, ControllerInterface controller) throws IOException
     {
         FXMLLoader loader = new FXMLLoader();
