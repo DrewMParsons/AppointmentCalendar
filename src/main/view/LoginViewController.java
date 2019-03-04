@@ -1,5 +1,12 @@
 package main.view;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -7,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
@@ -18,7 +26,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -168,6 +175,7 @@ public class LoginViewController implements Initializable
                                 }
                     }
                 }
+                recordLogin();
                 SceneChanger sc = new SceneChanger();
                 USERID = user.getUserID();
                 USERNAME= user.getUserName();
@@ -189,6 +197,36 @@ public class LoginViewController implements Initializable
         }
     }
 
-    
+    /**
+     * This method will record a timestamp and UserID to a .txt file when 
+     * the user logs in to the app. If the file "LoginRecords.txt" does not exist
+     * it will be created
+     */
+   private void recordLogin() throws IOException 
+   {
+       File file = new File("LoginRecords.txt");
+       file.createNewFile();
+       Instant instant = Instant.now();
+       
+       try(FileWriter fileWriter = new FileWriter(file,true);
+               BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);)
+       {
+           
+          bufferedWriter.newLine();
+           bufferedWriter.write("UserName: " + user.getUserName());
+           bufferedWriter.write(" Logged In: " + instant + " UTC" );
+          
+           System.out.println("Recorded the Login at" + file.getAbsolutePath());
+           
+           
+       } catch (FileNotFoundException ex)
+        {
+            System.out.println("File: " + file.getName()+ " not found");
+        } catch (IOException ex)
+        {
+            System.out.println("Problem Reading File " + file.getName());
+        }
+       
+   }
 
 }
